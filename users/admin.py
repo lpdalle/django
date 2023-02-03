@@ -1,3 +1,4 @@
+from api.models import Generation, Images, User
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from users.forms import CustomUserChangeForm, CustomUserCreationForm
@@ -26,3 +27,6 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Images)
+admin.site.register(Generation)
+admin.site.register(User)
