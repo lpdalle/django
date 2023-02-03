@@ -16,7 +16,7 @@ class User(models.Model):
 
 class Generation(models.Model):
     uid = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     prompt = models.CharField(max_length=100, null=False)
     status = models.CharField(max_length=20, null=False)  # noqa: WPS432
 
@@ -28,9 +28,9 @@ class Generation(models.Model):
 
 
 class Images(models.Model):
-    uid = models.IntegerField(primary_key=True)
-    url = models.CharField(max_length=30, null=False)  # noqa: WPS432
-    generation_id = models.ForeignKey(Generation, on_delete=models.CASCADE)
+    uid = models.AutoField(primary_key=True)
+    url = models.CharField(max_length=240, null=False)  # noqa: WPS432
+    generation = models.ForeignKey(Generation, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'images'

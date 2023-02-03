@@ -1,11 +1,13 @@
 from rest_framework import routers
 
 from api.views import (
-    GenerationAcquire,
+    GenerationsImageUpload,
     GenerationsUserSet,
     GenerationsViewSet,
     UsersViewSet,
     UserViewByTgID,
+    acquire,
+    complete,
 )
 from django.contrib import admin
 from django.urls import include, path
@@ -19,6 +21,8 @@ urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/users/telegram/<str:telegram_id>/', UserViewByTgID.as_view()),
     path('api/v1/generations/', include(router.urls)),
-    path('api/v1/users/<int:user_id>/generations/', GenerationsUserSet.as_view()),
-    path('api/v1/generation/acquire', GenerationAcquire.as_view()),
+    path('api/v1/users/<int:user>/generations/', GenerationsUserSet.as_view()),
+    path('api/v1/generations/acquire', acquire),
+    path('api/v1/generations/<int:uid>/complete', complete),
+    path('api/v1/generations/<int:generation_id>/images/', GenerationsImageUpload.as_view()),
 ]

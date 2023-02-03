@@ -1,7 +1,13 @@
-from rest_framework import generics, viewsets
+from pathlib import Path
+from uuid import uuid4
+
+from rest_framework import generics, status, viewsets
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from api.models import Generation, Images, User
-from api.serializers import GenerationSerializer, UserSerializer
+from api.serializers import GenerationSerializer, ImagesSerializer, UserSerializer
+from django.forms.models import model_to_dict
 
 
 class UsersViewSet(viewsets.ModelViewSet):
@@ -30,25 +36,53 @@ class GenerationsUserSet(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Generation.objects.all()
-        user_id = self.kwargs.get('user_id')
+        user_id = self.kwargs.get('user')
         if user_id is not None:
             queryset = queryset.filter(user_id=user_id)
         return queryset
 
     def create(self, request, *args, **kwargs):
-        user_id = self.kwargs.get('user_id')
-        request.data['user_id'] = user_id
+        user_id = self.kwargs.get('user')
+        request.data['user'] = user_id
         return super().create(request)
 
 
-class GenerationAcquire(generics.CreateAPIView):
-    serializer_class = GenerationSerializer
+@api_view(['POST'])
+def acquire(request):
+    generation = Generation.objects.filter(status='pending').first()
+    generation.status = 'running'
+    generation.save()
+    data = model_to_dict(generation)
+    return Response(data=data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def complete(request, uid):
+    generation = Generation.objects.filter(uid=uid).first()
+    generation.status = 'complete'
+    generation.save()
+    data = model_to_dict(generation)
+    return Response(data=data, status=status.HTTP_201_CREATED)
+
+
+IMAGES = Path('.data/images')
+
+
+class GenerationsImageUpload(generics.CreateAPIView):
+    serializer_class = ImagesSerializer
 
     def create(self, request, *args, **kwargs):
-        queryset = Generation.objects.filter(status='pending').first()
-        queryset.status = 'running'
-        return super().create(request, *args, **kwargs)
+        generation_id = self.kwargs['generation_id']
+        dir = IMAGES / str(generation_id)
+        dir.mkdir(parents=True, exist_ok=True)
+        filename = f'{uuid4().hex}.png'
+        filepath = dir / filename
 
+        file = request.data.get('file')
+        content = file.read()
+        with open(filepath, 'wb') as fs:
+            fs.write(content)
 
-class GenerationsStatusComplete(generics.UpdateAPIView):
-    serializer_class = GenerationSerializer
+        request.data['generation'] = generation_id
+        request.data['url'] = str(filepath)
+        return super().create(request)
