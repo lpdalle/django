@@ -1,6 +1,7 @@
 FROM python:3.11.1-slim
 
 ENV POETRY_VIRTUALENVS_CREATE=false
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
@@ -13,4 +14,4 @@ COPY api /app/api
 COPY lpdalle /app/lpdalle
 COPY users /app/users
 
-CMD ["python", "-m", "manage", "runserver", "0.0.0.0:5000"]
+CMD ["python", "manage.py", "runserver"]
