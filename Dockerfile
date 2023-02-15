@@ -14,4 +14,4 @@ COPY api /app/api
 COPY lpdalle /app/lpdalle
 COPY users /app/users
 
-CMD ["python", "manage.py", "runserver"]
+CMD ["python", "manage.py", "runserver", "django_backend:8000"]
