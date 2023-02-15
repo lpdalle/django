@@ -11,12 +11,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%^5nx5=f$k4j(g@7nq&=y(-)p@m1sec-xi2(!wlc3(jjq8dj(!'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['django_backend', 'localhost']
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
