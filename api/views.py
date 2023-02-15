@@ -50,6 +50,8 @@ class GenerationsUserSet(generics.ListCreateAPIView):
 @api_view(['POST'])
 def acquire(request):
     generation = Generation.objects.filter(status='pending').first()
+    if not generation:
+        return Response(data=[], status=status.HTTP_201_CREATED)
     generation.status = 'running'
     generation.save()
     data = model_to_dict(generation)
