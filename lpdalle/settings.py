@@ -16,7 +16,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', '.django_backend', 'localhost']
+ALLOWED_HOSTS = ['.django_backend']
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
